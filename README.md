@@ -63,7 +63,7 @@ https://discordapp.com/register
 
 Once this is setup, you will need to create a new bot by opening a new tab and visiting the [Discord Developer Page](https://discordapp.com/developers/applications/) and selecting `New Application`.  From here you can give it a name, and click `Create`, and once this is done you will be brought to a page that shows the information associated with this application including its `Client ID` which we will need to use in a later step.
 
-On this same page, you will also need to setup a bot to live inside of this application which can be done by selecting `Bot` from the left-hand sidebar, then `Add Bot` followed by `Yes do it`.  You will then see a message stating `A wild bot has appeared!` and will be presented with the configuration for your bot, including your `Token` which will be needed within your JavaScript code itself.
+On this same page, you will also need to setup a bot to live inside of this application which can be done by selecting `Bot` from the left-hand sidebar, then `Add Bot` followed by `Yes do it`.  You will then see a message stating `A wild bot has appeared!` and will be presented with the configuration for your bot, including your `Token` which will be pulled into your JavaScript code.
 
 Next, you will need to go back to your main Discord tab, and create a new Discord server by selecting the plus button at the bottom of your server list in the left-hand sidebar. From here select `Create a server`, give it a name and region, and click `Create`.
 
@@ -72,6 +72,12 @@ Now you have both a bot and a server, but you haven't joined the two to each oth
 https://discordapp.com/api/oauth2/authorize?scope=bot&client_id=000000000000000000
 
 By visiting this URL in a new tab, you will be brought to a wizard to configure your bot, and from here you can select the server you created earlier, followed by `Authorize`.
+
+Once this is complete you need to add the Bot's Token to your local environment by either running the following line in the terminal, and/or adding it to your `~/.bashrc` (Linux) or `~/.bash_profile` (macOS).
+
+```bash
+export DISCORD_BOT_TOKEN="Kyuufsf9898.382dsfSAFew.87adsfasjdbfhkewry3289aisdfasdflw.sadfw"
+```
 
 ## Installing dependencies
 
@@ -85,26 +91,85 @@ npm install discord.js
 
 ## Writing the code
 
+[comment]: <> (TODO: Flesh out explanations of code)
+
 Now that we have our project, our Discord bot, and our dependencies set up we can now begin writing the code.
 
-```
+We first start by importing our `discord.js` dependency using the Node.js [require](https://www.freecodecamp.org/news/requiring-modules-in-node-js-everything-you-need-to-know-e7fbd119be8/) syntax and setting it to a constant so that we can make use of it in our module:
+
+```javascript
 const Discord = require('discord.js');
+```
+
+Next we create two more constants, creating a new Discord Client object, and pulling the `DISCORD_BOT_TOKEN` from our local environment.
+
+```javascript
+const client = new Discord.Client();
+const token = process.env.DISCORD_BOT_TOKEN;
+```
+
+As you can see from both of the above lines, JavaScript does not make use of types (as you might see in C or Java), and instead variables are declared either by using `const` and `let` in newer apps for constants and normal variables respectively or by the older `var` syntax in older apps.  This lack of type safety requires JavaScript to compensate for this by making use of aggressive typecasting (the results of which can be seen in the example below).
+
+```javascript
+const numberTwo = 2;
+const stringTwo = '2';
+const arrayTwo = [2, 2];
+
+const sum = numberTwo + stringTwo + arrayTwo;
+
+console.log(sum); // 222,2
+```
+
+This is one of many quirks mentioned above that either make JavaScript a joy to work in, or absolute termoil depending on who you ask.
+
+Moving on in our `index.js` file, we now need to add a callback function
+
+```javascript
+client.on('ready', () => {
+  console.log(client);
+});
+```
+
+```javascript
+client.on('message', msg => {
+    if (msg.author.id !== client.user.id) {
+        console.log(msg);
+        msg.channel.send(msg.content.split('').reverse().join(''));
+    }
+});
+```
+
+Finally, we end by calling login on the Discord client using the token we put into the `DISCORD_BOT_TOKEN` environment variable earlier:
+
+```javascript
+client.login(token);
+```
+
+All of this comes together to create a short file that looks like the following:
+
+```javascript
+const Discord = require('discord.js');
+
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_TOKEN;
 
 client.on('ready', () => {
-  console.log('BOT READY: ' + client.user.username);
+  console.log(client);
 });
 
 client.on('message', msg => {
     if (msg.author.id !== client.user.id) {
+        console.log(msg);
         msg.channel.send(msg.content.split('').reverse().join(''));
     }
 });
 
 client.login(token);
+
 ```
 
-## Where to find more information
+## Where to go from here
+
+
 
 Thanks to Gareth Dwyer from codementor.io for inspiration for this project: https://www.codementor.io/garethdwyer/building-a-discord-bot-with-node-js-and-repl-it-mm46r1u8y
