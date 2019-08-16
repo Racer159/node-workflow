@@ -135,7 +135,7 @@ Moving back to our `index.js` file, we now need to add our first callback functi
 
 ```javascript
 client.on('ready', () => {
-  console.log('BOT IS READY: ' + client.user.name);
+  console.log('BOT IS READY: ' + client.user.username);
 });
 ```
 
@@ -178,7 +178,7 @@ const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_TOKEN;
 
 client.on('ready', () => {
-  console.log('BOT IS READY: ' + client.user.name);
+  console.log('BOT IS READY: ' + client.user.username);
 });
 
 client.on('message', (msg) => {
@@ -192,6 +192,8 @@ client.login(token);
 ```
 
 And that's it!  You can now start your bot, and see it respond to everything you say with reversed text!
+
+Do note however that if you shutdown your PC the bot will stop responding so if you want the bot to be more permanent you will want to setup a server for it to run in.
 
 ## Where to go from here
 
